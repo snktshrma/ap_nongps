@@ -1,7 +1,7 @@
 import threading
 import time
 import video_capture_gazebo
-import feature_match_ardu
+import feature_match_ardu as feature_match_ardu
 import traceback
 import signal
 import sys
@@ -58,18 +58,20 @@ class main:
 			if not self.video.frame_available():
 				continue
 			self.frame = self.video.frame
-			try:
-				[self.frame, x, y] = self.feature.compParam("satellite_image-main.png", self.frame,(self.kp,self.des))
-			except:
-				self.setPos(0,0)
-			if type(self.frame) != type(None):
-				self.setPos(x,y)
-				cv.imshow('frame', self.frame)
+			[bb,x,y] = self.feature.compParam("satellite_image-main.png", self.frame,(self.kp,self.des))
+			x_prev = x
+			y_prev = y
 
-				if cv.waitKey(1) & 0xFF == ord('q'):
-					break
+			# print(x, y)
+			
+			if type(bb) != type(None):
+			 	self.setPos(x,y)
+			 	cv.imshow('frame', bb)
+
+			 	if cv.waitKey(1) & 0xFF == ord('q'):
+			 		break
 			else:
-				self.setPos(x,y)
+			 	self.setPos(x_prev,y_prev)
 
 	def vid_sleep(self):
 		time.sleep(0.3)
