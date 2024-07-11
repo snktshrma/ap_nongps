@@ -1,7 +1,7 @@
 # ap_nongps
 
-### Pull ardupilot_gazebo (follow rest of the instructions in [readme here](https://github.com/snktshrma/ardupilot_gazebo_ap/tree/arena-high-alt?tab=readme-ov-file#harmonic-apt)):
-    git clone https://github.com/snktshrma/ardupilot_gazebo_ap.git -b arena-high-alt
+### Pull ardupilot_gazebo (follow rest of the instructions in [readme here](https://github.com/snktshrma/ardupilot_gazebo_ap/tree/gsoc-arena?tab=readme-ov-file#harmonic-apt)):
+    git clone https://github.com/snktshrma/ardupilot_gazebo_ap.git -b gsoc-arena
     cd ardupilot_gazebo_ap
     mkdir build && cd build
     cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo
@@ -33,7 +33,7 @@ Ensure the `GZ_VERSION` environment variable is set to either
 Clone the repo and build:
 
 ```bash
-git clone https://github.com/snktshrma/ardupilot_gazebo_ap.git -b arena-high-alt
+git clone https://github.com/snktshrma/ardupilot_gazebo_ap.git -b gsoc-arena
 cd ardupilot_gazebo_ap
 mkdir build && cd build
 cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo
