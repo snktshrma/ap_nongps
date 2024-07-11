@@ -68,6 +68,12 @@ Reload your terminal with `source ~/.bashrc`.
 ## Terminal 1:
     cd ardupilot && sim_vehicle.py -D -v ArduCopter -f JSON --add-param-file=$HOME/ardupilot_gazebo_ap/config/gazebo-iris-gimbal.parm --console --map
 
+#### Now set params:
+    rc 6 1500
+    rc 7 1340
+    rc 8 1500
+    
+
 ## Terminal 2: 
 ### For Gazebo Harmonic / Garden: 
     gz sim -v4 -r iris_runway.sdf
