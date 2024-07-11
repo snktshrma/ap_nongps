@@ -66,10 +66,10 @@ class main:
 			
 			if type(bb) != type(None):
 			 	self.setPos(x,y)
-			 	cv.imshow('frame', bb)
+			 	# cv.imshow('frame', bb)
 
-			 	if cv.waitKey(1) & 0xFF == ord('q'):
-			 		break
+			 	# if cv.waitKey(1) & 0xFF == ord('q'):
+			 	# 	break
 			else:
 			 	self.setPos(x_prev,y_prev)
 

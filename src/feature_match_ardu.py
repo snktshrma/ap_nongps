@@ -22,7 +22,7 @@ class Image_Process:
         self.inCMY = 0
 
         #user input ______________
-        self.focal = 30.4030836014194
+        self.focal = 25.7430836014194
         self.latBase = -353632621
         self.lonbase = 1491652371
 
@@ -143,7 +143,7 @@ class Image_Process:
             self.inCMX = (x-w1/2) * (10) / self.focal
             self.inCMY = (y-h1/2) * (10) / self.focal
 
-            print("Offset x, y(in cms): ",self.inCMX, self.inCMY)
+            print("Offset x, y(in cms): ",-self.inCMY, self.inCMX)
 
             # calculate zoom percentage
             binToBool= [True if n == 1 else False for n in matchesMask]
@@ -157,7 +157,7 @@ class Image_Process:
             scaleRatio = mainDist/desDist
             # print("Scaling Ratio:",scaleRatio) # multiplied by base altitude generates current altitude
 
-            return bounding_box, self.inCMX, self.inCMY
+            return bounding_box, -self.inCMY, self.inCMX
 
         else:
             print("Not enough matches are found - {}/{}".format(len(good), self.MIN_MATCH_COUNT) )
