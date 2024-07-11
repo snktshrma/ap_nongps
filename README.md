@@ -81,6 +81,8 @@ Reload your terminal with `source ~/.bashrc`.
 ## Terminal 3:
     gz topic -t /world/iris_runway/model/iris_with_gimbal/model/gimbal/link/pitch_link/sensor/camera/image/enable_streaming -m gz.msgs.Boolean -p "data: 1"
 
+    pip install -r requirements.txt
+
     cd src && python video_to_feature.py
 
     
