@@ -1,0 +1,6 @@
+opencv-python
+numpy
+pymavlink
+pygobject
+matplotlib
+pyexiv2
