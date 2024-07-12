@@ -1,6 +1,7 @@
 # ap_nongps
+This repository is a work-in-progress and need further modifications. Much of the code variables have been hardcoded to test the algorithm and it'll be solved in upcoming commits. 
 
-### Pull ardupilot_gazebo (follow rest of the instructions in [readme here](https://github.com/snktshrma/ardupilot_gazebo_ap/tree/gsoc-arena?tab=readme-ov-file#harmonic-apt)):
+### Pull ardupilot_gazebo gsoc-arena branch from the fork
     git clone https://github.com/snktshrma/ardupilot_gazebo_ap.git -b gsoc-arena
     cd ardupilot_gazebo_ap
     mkdir build && cd build
@@ -66,9 +67,12 @@ echo 'export GZ_SIM_RESOURCE_PATH=$HOME/ardupilot_gazebo_ap/models:$HOME/ardupil
 Reload your terminal with `source ~/.bashrc`.
 
 ## Terminal 1:
-    cd ardupilot && sim_vehicle.py -D -v ArduCopter -f JSON --add-param-file=$HOME/ardupilot_gazebo_ap/config/gazebo-iris-gimbal.parm --console --map
+    cd ardupilot && sim_vehicle.py -D -v ArduCopter -f JSON --add-param-file=$HOME/ardupilot_gazebo_ap/config/gazebo-iris-gimbal-ngps.parm --console --map
 
 ### Takeoff 10m as it is hardcoded for the time being
+    mode GUIDED
+    arm throttle force    # Because of Visual Odometry, we have to force for the initial takeoff
+    takeoff 10
 
 #### Now set params:
     rc 6 1500
@@ -81,11 +85,15 @@ Reload your terminal with `source ~/.bashrc`.
     gz sim -v4 -r iris_runway.sdf
     
 ## Terminal 3:
+    # Install dependencies
     sudo apt-get install libgirepository1.0-dev libcairo2-dev
     sudo apt-get install gobject-introspection
     pip install -r requirements.txt
 
+    # Enable camera streaming 
     gz topic -t /world/iris_runway/model/iris_with_gimbal/model/gimbal/link/pitch_link/sensor/camera/image/enable_streaming -m gz.msgs.Boolean -p "data: 1"
+
+    # Run the camera based state estimator
     cd src && python video_to_feature.py
 
     
