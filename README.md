@@ -68,6 +68,8 @@ Reload your terminal with `source ~/.bashrc`.
 ## Terminal 1:
     cd ardupilot && sim_vehicle.py -D -v ArduCopter -f JSON --add-param-file=$HOME/ardupilot_gazebo_ap/config/gazebo-iris-gimbal.parm --console --map
 
+### Takeoff 10m as it is hardcoded for the time being
+
 #### Now set params:
     rc 6 1500
     rc 7 1340
