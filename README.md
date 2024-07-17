@@ -47,7 +47,28 @@ Install python requirements:
 pip install -r requirements.txt
 ```
 
-## Terminal 1:
+
+## Terminal 1: 
+
+### For Gazebo Harmonic / Garden: 
+    gz sim -v4 -r iris_runway_ngps.sdf
+    
+#### Start streaming
+
+```bash
+gz topic -t /world/iris_runway/model/iris_with_gimbal/model/gimbal/link/pitch_link/sensor/camera/image/enable_streaming -m gz.msgs.Boolean -p "data: 1"
+```
+
+The terminal used to launch Gazebo should display the following if the streaming started correctly:
+
+```
+[Msg] GstCameraPlugin:: streaming: started
+[Dbg] [GstCameraPlugin.cc:407] GstCameraPlugin: creating generic pipeline
+[Msg] GstCameraPlugin: GStreamer element set state returned: 2
+[Msg] GstCameraPlugin: starting GStreamer main loop
+```
+    
+## Terminal 2:
     cd ardupilot && sim_vehicle.py -D -v ArduCopter -f JSON --add-param-file=$HOME/ardupilot_gazebo_ap/config/gazebo-iris-gimbal-ngps.parm --console --map
 
 ### Takeoff 10m as it is hardcoded for the time being
@@ -64,26 +85,6 @@ pip install -r requirements.txt
 
     # set yaw to centre
     Guided> rc 8 1500
-    
-#### Start streaming
-
-```bash
-gz topic -t /world/iris_runway/model/iris_with_gimbal/model/gimbal/link/pitch_link/sensor/camera/image/enable_streaming -m gz.msgs.Boolean -p "data: 1"
-```
-
-The terminal used to launch Gazebo should display the following if the streaming started correctly:
-
-```
-[Msg] GstCameraPlugin:: streaming: started
-[Dbg] [GstCameraPlugin.cc:407] GstCameraPlugin: creating generic pipeline
-[Msg] GstCameraPlugin: GStreamer element set state returned: 2
-[Msg] GstCameraPlugin: starting GStreamer main loop
-```
-
-
-## Terminal 2: 
-### For Gazebo Harmonic / Garden: 
-    gz sim -v4 -r iris_runway_ngps.sdf
     
 ## Terminal 3:
     # Run the camera based state estimator
