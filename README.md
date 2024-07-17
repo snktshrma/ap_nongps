@@ -83,7 +83,7 @@ The terminal used to launch Gazebo should display the following if the streaming
 
 ## Terminal 2: 
 ### For Gazebo Harmonic / Garden: 
-    gz sim -v4 -r iris_runway.sdf
+    gz sim -v4 -r iris_runway_ngps.sdf
     
 ## Terminal 3:
     # Run the camera based state estimator
