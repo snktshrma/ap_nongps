@@ -5,15 +5,15 @@ import pyexiv2, json
 import math
 from base_structures import location
 
-baseImg = "satellite_image.png" #"chk2.png"
-testImg = "test_gs.png"
+baseImg = "ortho2.png" #"chk2.png"
+testImg = "otest_2.png"
 
 class Image_Process:
     def __init__(self):
         self.x_offset = 0
         self.y_offset = 0
 
-        self.MIN_MATCH_COUNT = 15
+        self.MIN_MATCH_COUNT = 3
 
         self.LOCATION_SCALING_FACTOR_INV = 89.83204953368922 
         self.LOCATION_SCALING_FACTOR = 0.011131884502145034 
@@ -66,6 +66,7 @@ class Image_Process:
         print('comparing ' + img1 + ' vs ' + img2 + "\n")
 
         img1 = cv.imread(img1,0)
+        # img2 = cv.imread(img2,0)
         ret, img2 = cap.read()
         # img1 = cv.resize(img1, (1000,1000))
         # img2 = cv.resize(img2, (640,360))
@@ -99,7 +100,7 @@ class Image_Process:
             dst_pts = np.float32([kp2[m.trainIdx].pt for m in good]).reshape(-1,1,2)
             M, mask = cv.findHomography(src_pts, dst_pts, cv.RANSAC,5.0)
             matchesMask = mask.ravel().tolist()
-            h,w = img1.shape
+            h,w = img1.shape[:2]
             pts = np.float32([ [0,0],[0,h-1],[w-1,h-1],[w-1,0] ]).reshape(-1,1,2)
             dst = cv.perspectiveTransform(pts,M)
             img2 = cv.polylines(img2,[np.int32(dst)],True,255,3, cv.LINE_AA)
@@ -121,7 +122,7 @@ class Image_Process:
 
             # calculate x, y offset
             h1, w1 = img1.shape[:2]
-            h, w = img2.shape
+            h, w = img2.shape[:2]
 
             Mr, maskr = cv.findHomography(dst_pts, src_pts, cv.RANSAC, 5.0)
 
@@ -154,12 +155,8 @@ class Image_Process:
             scaleRatio = mainDist/desDist
             print("Scaling Ratio:",scaleRatio) # multiplied by base altitude generates current altitude
 
-        else:
-            print("Not enough matches are found - {}/{}".format(len(good), self.MIN_MATCH_COUNT) )
-            matchesMask = None
 
-
-        draw_params = dict(matchColor = (0,255,0),
+            draw_params = dict(matchColor = (0,255,0),
                            singlePointColor = (255,0,0),
                            matchesMask = matchesMask,
                            flags = 2)
@@ -168,19 +165,26 @@ class Image_Process:
 
 
 
-        cv.namedWindow("img3", cv.WINDOW_NORMAL)
-        img3 = cv.drawMatches(img1,kp1,img2,kp2,good,None,**draw_params)
-        #img3 = cvresize(img3, (1500,1000))
-        #print(comm)
-        cv.imshow('img3', img3)
-        # cv.imshow('img3', img3)
+            cv.namedWindow("img3", cv.WINDOW_NORMAL)
+            img3 = cv.drawMatches(img1,kp1,img2,kp2,good,None,**draw_params)
+            #img3 = cvresize(img3, (1500,1000))
+            #print(comm)
+            cv.imshow('img3', bounding_box)
+            # cv.imshow('img3', img3)
 
-        # calculate new lat and lng based upon pixel offset
-        # To-Do: get lat,lon,alt from image1 or user
-       # self.offset_latlng(self.latBase,self.lonbase,-self.inCMX,self.inCMY)
+            # calculate new lat and lng based upon pixel offset
+            # To-Do: get lat,lon,alt from image1 or user
+           # self.offset_latlng(self.latBase,self.lonbase,-self.inCMX,self.inCMY)
 
-        print("Waiting for key press")
-        cv.waitKey(0)
+            print("Waiting for key press")
+            cv.waitKey(0)
+
+        else:
+            print("Not enough matches are found - {}/{}".format(len(good), self.MIN_MATCH_COUNT) )
+            matchesMask = None
+
+
+        
 
 
 
@@ -237,8 +241,8 @@ class Image_Process:
 if __name__ == '__main__':
 
     img = Image_Process()
-    cap = cv2.VideoCapture("a8-vid.mp4")  # Replace '0' with the appropriate camera source if needed
-    cap.set(cv2.CAP_PROP_POS_FRAMES, 2000)
+    cap = cv.VideoCapture("a8-vid.mp4")  # Replace '0' with the appropriate camera source if needed
+    cap.set(cv.CAP_PROP_POS_FRAMES, 2000)
 
     while True:
         img.compParam(baseImg, testImg, cap)
