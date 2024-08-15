@@ -67,8 +67,8 @@ class Image_Process:
 
         img1 = cv.imread(img1,0)
         img2 = cv.imread(img2,0)
-        img1 = cv.resize(img1, (1000,1000))
-        img2 = cv.resize(img2, (640,360))
+        # img1 = cv.resize(img1, (1000,1000))
+        # img2 = cv.resize(img2, (640,360))
 
         # extract key features from each image
         sift = cv.SIFT_create(nfeatures = 10000)
@@ -153,6 +153,7 @@ class Image_Process:
 
             scaleRatio = mainDist/desDist
             print("Scaling Ratio:",scaleRatio) # multiplied by base altitude generates current altitude
+            return (-y, x)
 
         else:
             print("Not enough matches are found - {}/{}".format(len(good), self.MIN_MATCH_COUNT) )
@@ -168,19 +169,19 @@ class Image_Process:
 
 
 
-        cv.namedWindow("img3", cv.WINDOW_NORMAL)
-        img3 = cv.drawMatches(img1,kp1,img2,kp2,good,None,**draw_params)
-        #img3 = cvresize(img3, (1500,1000))
-        #print(comm)
-        cv.imshow('img3', img3)
-        # cv.imshow('img3', img3)
+       #  cv.namedWindow("img3", cv.WINDOW_NORMAL)
+       #  img3 = cv.drawMatches(img1,kp1,img2,kp2,good,None,**draw_params)
+       #  #img3 = cvresize(img3, (1500,1000))
+       #  #print(comm)
+       #  cv.imshow('img3', img3)
+       #  # cv.imshow('img3', img3)
 
-        # calculate new lat and lng based upon pixel offset
-        # To-Do: get lat,lon,alt from image1 or user
-       # self.offset_latlng(self.latBase,self.lonbase,-self.inCMX,self.inCMY)
+       #  # calculate new lat and lng based upon pixel offset
+       #  # To-Do: get lat,lon,alt from image1 or user
+       # # self.offset_latlng(self.latBase,self.lonbase,-self.inCMX,self.inCMY)
 
-        print("Waiting for key press")
-        cv.waitKey(0)
+       #  print("Waiting for key press")
+       #  cv.waitKey(0)
 
 
 

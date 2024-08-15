@@ -5,15 +5,15 @@ import pyexiv2, json
 import math
 from base_structures import location
 
-baseImg = "satellite_image-main.png" #"chk2.png"
-testImg = "chk1.png"
+baseImg = "satellite_image.png" #"chk2.png"
+testImg = "test_gs.png"
 
 class Image_Process:
     def __init__(self):
         self.x_offset = 0
         self.y_offset = 0
 
-        self.MIN_MATCH_COUNT = 10
+        self.MIN_MATCH_COUNT = 15
 
         self.LOCATION_SCALING_FACTOR_INV = 89.83204953368922 
         self.LOCATION_SCALING_FACTOR = 0.011131884502145034 
@@ -22,7 +22,7 @@ class Image_Process:
         self.inCMY = 0
 
         #user input ______________
-        self.focal = 25.7430836014194
+        self.focal = 476.7030836014194
         self.latBase = -353632621
         self.lonbase = 1491652371
 
@@ -60,19 +60,19 @@ class Image_Process:
         distance = math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
         return distance
 
-    def compParam(self,img1,img2,ext, start_pose=None, est_alt=10):
 
-        # print('comparing ' + img1 + ' vs ' + img2 + "\n")
+    def compParam(self,img1,img2, cap):
 
-        img1 = cv.imread(img1,1)
-        img1 = cv.cvtColor(img1, cv.COLOR_RGB2GRAY) 
-        # img2 = cv.imread(img2,0)
-        # img1 = cv.resize(img1, (600,600))
-        # img2 = cv.resize(img2, (640, 360))
+        print('comparing ' + img1 + ' vs ' + img2 + "\n")
+
+        img1 = cv.imread(img1,0)
+        ret, img2 = cap.read()
+        # img1 = cv.resize(img1, (1000,1000))
+        # img2 = cv.resize(img2, (640,360))
 
         # extract key features from each image
-        sift = cv.SIFT_create(nfeatures = 20000)
-        kp1, des1 = ext #sift.detectAndCompute(img1,None)
+        sift = cv.SIFT_create(nfeatures = 10000)
+        kp1, des1 = sift.detectAndCompute(img1,None)
         kp2, des2 = sift.detectAndCompute(img2,None)
 
         # find matching features from each image
@@ -92,7 +92,7 @@ class Image_Process:
         # ensure we have at at least 30 matching points
         if len(good)>self.MIN_MATCH_COUNT:
 
-            # print(len(good))
+            print(len(good))
 
             # display image showing matching points
             src_pts = np.float32([kp1[m.queryIdx].pt for m in good]).reshape(-1,1,2)
@@ -102,7 +102,7 @@ class Image_Process:
             h,w = img1.shape
             pts = np.float32([ [0,0],[0,h-1],[w-1,h-1],[w-1,0] ]).reshape(-1,1,2)
             dst = cv.perspectiveTransform(pts,M)
-            img2 = cv.polylines(img2.astype(np.uint8),[np.int32(dst)],True,255,3, cv.LINE_AA)
+            img2 = cv.polylines(img2,[np.int32(dst)],True,255,3, cv.LINE_AA)
 
             # warped_img2 = cv.warpPerspective(img2, M, (w, h))
 
@@ -116,20 +116,18 @@ class Image_Process:
             orientation_diff = np.arctan2(np.abs(dst[1][0][1] - dst[0][0][1]), np.abs(dst[1][0][0] - dst[0][0][0]))
             
 
-            # print("Orientation difference: {:.2f} degrees".format(90 - np.degrees(orientation_diff)))
+            print("Orientation difference: {:.2f} degrees".format(90 - np.degrees(orientation_diff)))
 
 
             # calculate x, y offset
             h1, w1 = img1.shape[:2]
-            h, w = img2.shape[:2]
-            # print(h,w)
+            h, w = img2.shape
 
             Mr, maskr = cv.findHomography(dst_pts, src_pts, cv.RANSAC, 5.0)
 
             corners = np.array([[0, 0], [0, h-1], [w-1, h-1], [w-1, 0]], dtype=np.float32).reshape(-1, 1, 2)
             transformed_corners = cv.perspectiveTransform(corners, Mr)
 
-            # print(np.int32(transformed_corners))
 
 
             bounding_box = cv.polylines(img1, [np.int32(transformed_corners)], True, 255, 3, cv.LINE_AA)
@@ -138,15 +136,11 @@ class Image_Process:
 
             x, y = np.mean(transformed_corners, axis=0).astype(int)[0]
 
-            # print("Offset x, y(in cms): ",x-w1/2, y-h1/2)
-            if start_pose == None:
-                self.inCMX = (x-w1/2) * (est_alt) / self.focal
-                self.inCMY = (y-h1/2) * (est_alt) / self.focal
-            else:
-                self.inCMX = (x-start_pose[0]) * (est_alt) / self.focal
-                self.inCMY = (y-start_pose[1]) * (est_alt) / self.focal
+            print("Offset x, y(in cms): ",x-w1/2, y-h1/2)
 
-            print("Offset x, y(in cms): ",-self.inCMY, self.inCMX)
+            self.inCMX = (x-w1/2) * (10) / self.focal
+            self.inCMY = (y-h1/2) * (10) / self.focal
+
 
             # calculate zoom percentage
             binToBool= [True if n == 1 else False for n in matchesMask]
@@ -158,48 +152,35 @@ class Image_Process:
             desDist = self.calc_dist(res_listT[0][0][0],res_listT[0][0][1],res_listT[-1][0][0],res_listT[-1][0][1])
 
             scaleRatio = mainDist/desDist
-            # print("Scaling Ratio:",scaleRatio) # multiplied by base altitude generates current altitude
-
-            return bounding_box, -self.inCMY, self.inCMX
+            print("Scaling Ratio:",scaleRatio) # multiplied by base altitude generates current altitude
 
         else:
             print("Not enough matches are found - {}/{}".format(len(good), self.MIN_MATCH_COUNT) )
             matchesMask = None
 
 
-        # draw_params = dict(matchColor = (0,255,0),
-        #                    singlePointColor = (255,0,0),
-        #                    matchesMask = matchesMask,
-        #                    flags = 2)
+        draw_params = dict(matchColor = (0,255,0),
+                           singlePointColor = (255,0,0),
+                           matchesMask = matchesMask,
+                           flags = 2)
 
 
 
 
 
-        # ######### cv.namedWindow("img3", cv.WINDOW_NORMAL)
-        # ########## img3 = cv.drawMatches(img1,kp1,img2,kp2,good,None,**draw_params)
-
-
+        cv.namedWindow("img3", cv.WINDOW_NORMAL)
+        img3 = cv.drawMatches(img1,kp1,img2,kp2,good,None,**draw_params)
         #img3 = cvresize(img3, (1500,1000))
         #print(comm)
-
-
-
-        # ######## cv.imshow('img3', bounding_box)
-
-
-
-
+        cv.imshow('img3', img3)
         # cv.imshow('img3', img3)
 
         # calculate new lat and lng based upon pixel offset
         # To-Do: get lat,lon,alt from image1 or user
        # self.offset_latlng(self.latBase,self.lonbase,-self.inCMX,self.inCMY)
 
-
-        # print("Waiting for key press")
-        # cv.waitKey(1)
-        
+        print("Waiting for key press")
+        cv.waitKey(0)
 
 
 
@@ -256,8 +237,11 @@ class Image_Process:
 if __name__ == '__main__':
 
     img = Image_Process()
+    cap = cv2.VideoCapture("a8-vid.mp4")  # Replace '0' with the appropriate camera source if needed
+    cap.set(cv2.CAP_PROP_POS_FRAMES, 2000)
 
-    img.compParam(baseImg, testImg)
+    while True:
+        img.compParam(baseImg, testImg, cap)
 
     #offset_latlng(self.latBase,self.lonbase,-self.inCMX,self.inCMY)
 
