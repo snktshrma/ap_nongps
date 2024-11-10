@@ -2,7 +2,7 @@
 This repository is a work-in-progress and need further modifications. Much of the code variables have been hardcoded to test the algorithm and it'll be solved in upcoming commits. 
 
 ## Setup ardupilot_gazebo
-The first step assumes you have build the ArduPilotPlugin and got ardupilot_gazebo setup on the system. Follow the instructions provided [here](https://github.com/snktshrma/ardupilot_gazebo) if not.
+The first step assumes you have build the ArduPilotPlugin and got ardupilot_gazebo setup on the system. Follow the instructions provided [here](https://github.com/snktshrma/ardupilot_gazebo_ap/tree/gsoc-arena) if not.
 
 ## Configure
 
