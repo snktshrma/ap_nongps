@@ -1,6 +1,12 @@
 # ap_nongps
 This repository is a work-in-progress and need further modifications. Much of the code variables have been hardcoded to test the algorithm and it'll be solved in upcoming commits. 
 
+## Setup script
+You can clone this repo to $HOME and run the ./setup.sh script directly to set it all up at once (give root access if required (sudo)).
+
+    chmod +x setup.sh
+    ./setup.sh
+
 ## Setup ardupilot_gazebo
 The first step assumes you have build the ArduPilotPlugin and got ardupilot_gazebo setup on the system. Follow the instructions provided [here](https://github.com/snktshrma/ardupilot_gazebo_ap/tree/gsoc-arena) if not.
 
