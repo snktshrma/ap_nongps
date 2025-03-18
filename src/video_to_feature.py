@@ -83,10 +83,8 @@ class main:
 		self.kp, self.des = self.sift.detectAndCompute(self.img1,None)
 	def getComp(self):
 		global x_prev, y_prev
-		while not self.check_takeoff_complete(10):
-			continue
 
-		while not self.check_takeoff_complete():
+		while not self.check_takeoff_complete(10):
 			if not self.video.frame_available():
 				continue
 			self.frame = self.video.frame
@@ -128,6 +126,15 @@ the_connection.mav.command_long_send(
 	the_connection.target_system, the_connection.target_component,
       mavutil.mavlink.MAV_CMD_SET_MESSAGE_INTERVAL, 0,
       32,
+      1e6 / 10,
+      0, 0, 0, 0,
+      0,
+)
+
+the_connection.mav.command_long_send(
+	the_connection.target_system, the_connection.target_component,
+      mavutil.mavlink.MAV_CMD_SET_MESSAGE_INTERVAL, 0,
+      33,
       1e6 / 10,
       0, 0, 0, 0,
       0,
