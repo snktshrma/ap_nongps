@@ -1,6 +1,6 @@
 # ap_nongps
 
-## [** Hardware implementation and Transformer & Optimisation based algorithm](https://github.com/snktshrma/ngps_flight)
+## [** Hardware implementation and Transformer & Optimisation based VPS](https://github.com/snktshrma/ngps_flight)
 
 This repository is a work-in-progress and need further modifications. Much of the code variables have been hardcoded to test the algorithm and it'll be solved in upcoming commits. 
 
