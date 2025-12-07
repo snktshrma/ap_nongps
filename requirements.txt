@@ -1,6 +1,7 @@
-opencv-python
-numpy
-pymavlink
-pygobject
-matplotlib
+opencv-python==4.6.0.66
+numpy<2,>=1.21.0
+pymavlink==2.4.49
+pygobject==3.42.1
+matplotlib>=3.5.0
+pyserial>=3.0
 pyexiv2

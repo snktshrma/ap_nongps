@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  ap_nongps:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ap_nongps:latest
+    container_name: ap_nongps_container
+
+    # Enable GPU support for NVIDIA GPUs
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]
+
+    # X11 forwarding for GUI
+    environment:
+      - DISPLAY=${DISPLAY}
+      - QT_X11_NO_MITSHM=1
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=all
+
+    # Mount X11 socket and source code
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - ./src:/root/ap_nongps/src:rw
+      - ./models:/root/ap_nongps/models:ro
+      - ./worlds:/root/ap_nongps/worlds:ro
+      - ./requirements.txt:/root/ap_nongps/requirements.txt:ro
+
+    # Network mode for MAVLink communication
+    network_mode: host
+
+    # Keep container running
+    stdin_open: true
+    tty: true
+
+    # Privileged mode for hardware access
+    privileged: true
+
+    # Device access
+    devices:
+      - /dev/dri:/dev/dri
+
+    working_dir: /root/ap_nongps
+
+    command: /bin/bash
